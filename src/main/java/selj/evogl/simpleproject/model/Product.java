@@ -1,17 +1,16 @@
 package selj.evogl.simpleproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDate;
 
 @Data
-@Entity
-@Table(name = "products")
+@Document(collection = "products") // Indique la collection MongoDB
 public class Product {
     @Id
-    private Long id;
+    private String id;
     private String name;
     private double price;
     private LocalDate expirationDate;

@@ -1,7 +1,10 @@
 package selj.evogl.simpleproject.repository;
 
+import org.springframework.data.mongodb.repository.MongoRepository;
 import selj.evogl.simpleproject.model.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+import java.util.Optional;
+
+public interface ProductRepository extends MongoRepository<Product, String> {
+    Optional<Product> findByName(String name);
 }

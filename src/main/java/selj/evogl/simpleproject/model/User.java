@@ -1,17 +1,15 @@
 
 package selj.evogl.simpleproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name = "users")
+@Document(collection = "users") // Indique la collection MongoDB
 public class User {
     @Id
-    private Long id;
+    private String id;
     private String name;
     private int age;
     private String email;

@@ -1,7 +1,10 @@
 package selj.evogl.simpleproject.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import selj.evogl.simpleproject.model.User;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
+
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByEmailAndPassword(String email, String password);
 }
