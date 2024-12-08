@@ -23,8 +23,8 @@ configurations {
 sourceSets {
     main {
         java {
-            srcDirs = ["/home/s-elj/Documents/M2/EvoLogiciel/SpringProject_altered_copy"]
-            //srcDirs = ['src/main/java']
+            //srcDirs = ["/home/s-elj/Documents/M2/EvoLogiciel/SpringProject_altered_copy"]
+            srcDirs = ['src/main/java']
         }
     }
 }

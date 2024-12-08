@@ -85,7 +85,7 @@ public class LogParser {
                 writer.write(",\n");
             }
             first = false;
-            System.err.println("Ecriture d'un profile json.");
+            System.out.println("Ecriture d'un profile json: " +profile.getUserName());
 
             // Écrire le profil de l'utilisateur dans le fichier
             writer.write("\"" + profile.getUserId() + "\": {\n");
