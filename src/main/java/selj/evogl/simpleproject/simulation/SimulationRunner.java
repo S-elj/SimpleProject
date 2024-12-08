@@ -53,6 +53,7 @@ public class SimulationRunner implements CommandLineRunner {
 
         // Exécuter les scénarios de simulation
         runScenarios(users, products);
+
     }
 
     private List<User> createDummyUsers() {
@@ -135,6 +136,7 @@ public class SimulationRunner implements CommandLineRunner {
             }
         }
         System.out.println("Simulation done, log available in logs/user-logs.log" );
+        System.exit(0);
 
     }
 

@@ -17,6 +17,7 @@ public class LogProfileGenerator {
             parser.parseLogs("logs/user-logs.log");
             parser.saveProfilesToJson("logs/user-profiles.json");
             System.out.println("Profiles saved to output/user-profiles.json");
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
