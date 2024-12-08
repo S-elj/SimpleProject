@@ -1,5 +1,9 @@
 package selj.evogl.simpleproject.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import selj.evogl.simpleproject.exception.UserAlreadyExistsException;
@@ -11,6 +15,10 @@ import java.util.List;
 
 @Service
 public class UserService {
+    ObjectMapper mapper= new ObjectMapper();
+    @Setter
+    @Getter
+    private User loggedInUser;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,4 +58,14 @@ public class UserService {
         user.setId(id);
         return userRepository.save(user);
     }
+
+    public String getLoggedInUserJson() {
+        try {
+            return mapper.writeValueAsString(loggedInUser);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
+
 }

@@ -1,0 +1,30 @@
+<configuration>
+    <!-- Appender pour les logs utilisateur -->
+    <appender name="USER_LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/user-logs.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/user-logs-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger spécifique pour les utilisateurs -->
+    <logger name="com.example.user" level="INFO" additivity="false">
+        <appender-ref ref="USER_LOGS" />
+    </logger>
+
+    <!-- Appender général -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>

@@ -19,6 +19,19 @@ configurations {
     }
 }
 
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["/home/s-elj/Documents/M2/EvoLogiciel/SpringProject_altered_copy"]
+            //srcDirs = ['src/main/java']
+        }
+    }
+}
+
+
+
+
 repositories {
     mavenCentral()
 }
@@ -28,8 +41,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'  // Added for web support
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
+    //logs
 
-    // H2 Database
+    implementation 'org.slf4j:slf4j-api:2.0.9' // SLF4J API
+    implementation 'ch.qos.logback:logback-classic:1.4.11' // Implémentation Logback
+
+    implementation 'org.json:json:20090211'
+
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

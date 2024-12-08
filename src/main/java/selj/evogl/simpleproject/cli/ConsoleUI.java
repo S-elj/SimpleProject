@@ -1,5 +1,6 @@
 package selj.evogl.simpleproject.cli;
 
+import org.springframework.context.annotation.Profile;
 import selj.evogl.simpleproject.model.Product;
 import selj.evogl.simpleproject.model.User;
 import selj.evogl.simpleproject.repository.ProductRepository;
@@ -12,10 +13,13 @@ import selj.evogl.simpleproject.exception.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import java.time.format.DateTimeParseException;
+
 
 import java.time.LocalDate;
 import java.util.Scanner;
 
+@Profile("cli")
 @Component
 public class ConsoleUI implements CommandLineRunner {
 
@@ -78,11 +82,14 @@ public class ConsoleUI implements CommandLineRunner {
                             deleteProduct();
                             break;
                         case 5:
-                            updateProduct();
+                            updateProductByName();
                             break;
                         case 6:
-                            loggedInUser = null; // logout
+                            userService.setLoggedInUser(null); // Supprimez l'utilisateur connecté
+                            loggedInUser = null;
+                            System.out.println("Logged out successfully.");
                             break;
+
                         default:
                             System.out.println("Invalid choice. Please try again.");
                     }
@@ -111,6 +118,9 @@ public class ConsoleUI implements CommandLineRunner {
         System.out.print("Enter email: ");
         user.setEmail(scanner.nextLine());
 
+        System.out.print("Enter age ");
+        user.setAge(scanner.nextInt());
+
         System.out.print("Enter password: ");
         user.setPassword(scanner.nextLine());
 
@@ -127,6 +137,7 @@ public class ConsoleUI implements CommandLineRunner {
 
         try {
             loggedInUser = userService.authenticateUser(email, password);
+            userService.setLoggedInUser(loggedInUser); // Synchroniser avec UserService
             System.out.println("Login successful! Welcome " + loggedInUser.getName());
         } catch (UserNotFoundException e) {
             System.out.println("Error: " + e.getMessage());
@@ -160,22 +171,38 @@ public class ConsoleUI implements CommandLineRunner {
     private void addNewProduct() {
         Product product = new Product();
 
-        System.out.print("Enter product ID: ");
-        product.setId(scanner.nextLine());
-
         System.out.print("Enter product name: ");
-        product.setName(scanner.nextLine());
+        product.setName(scanner.nextLine().trim()); // Supprime les espaces superflus
 
-        System.out.print("Enter product price: ");
-        product.setPrice(scanner.nextDouble());
+        try {
+            System.out.print("Enter product price: ");
+            String priceInput = scanner.nextLine().trim();
+            double price = Double.parseDouble(priceInput.replace(",", "."));
+            product.setPrice(price);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid price format. Please enter a numeric value.");
+            return; // Sort de la méthode si le format du prix est invalide
+        }
 
-        System.out.print("Enter expiration date (YYYY-MM-DD): ");
-        scanner.nextLine();
-        product.setExpirationDate(LocalDate.parse(scanner.nextLine()));
+        try {
+            System.out.print("Enter expiration date (YYYY-MM-DD): ");
+            String dateInput = scanner.nextLine().trim();
+            product.setExpirationDate(LocalDate.parse(dateInput)); // Valide le format de la date
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            return; // Sort de la méthode si le format de la date est invalide
+        }
 
-        productService.createProduct(product);
-        System.out.println("Product added successfully!");
+        try {
+            productService.createProduct(product);
+            System.out.println("Product added successfully!");
+        } catch (ProductAlreadyExistsException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
     }
+
 
 
     private void deleteProduct() {
@@ -186,24 +213,38 @@ public class ConsoleUI implements CommandLineRunner {
     }
 
 
-    private void updateProduct() {
-        System.out.print("Enter product ID to update: ");
-        String id = scanner.nextLine();
+    private void updateProductByName() {
+        System.out.print("Enter product name to update: ");
+        String name = scanner.nextLine();
 
-        Product product = new Product();
-        product.setId(id);
+        // Recherchez le produit par nom
+        Product existingProduct = productService.findByName(name);
+        if (existingProduct == null) {
+            System.out.println("No product found with name: " + name);
+            return;
+        }
 
-        System.out.print("Enter new product name: ");
-        product.setName(scanner.nextLine());
+        System.out.println("Existing product details: " + existingProduct);
+
+        // Modification du nom
+        System.out.print("Enter new product name (or press Enter to keep current): ");
+        String newName = scanner.nextLine();
+        if (!newName.isBlank() && !newName.equals(existingProduct.getName())) {
+            if (productService.existsByName(newName)) {
+                System.out.println("Error: A product with this name already exists.");
+                return;
+            }
+            existingProduct.setName(newName);
+        }
 
         System.out.print("Enter new product price: ");
-        product.setPrice(scanner.nextDouble());
+        double price = Double.parseDouble(scanner.nextLine().replace(",", "."));
+        existingProduct.setPrice(price);
 
         System.out.print("Enter new expiration date (YYYY-MM-DD): ");
-        scanner.nextLine(); // consume newline
-        product.setExpirationDate(LocalDate.parse(scanner.nextLine()));
+        existingProduct.setExpirationDate(LocalDate.parse(scanner.nextLine()));
 
-        productService.updateProduct(id, product);
+        productService.updateProductByName(name ,existingProduct);
         System.out.println("Product updated successfully!");
     }
 

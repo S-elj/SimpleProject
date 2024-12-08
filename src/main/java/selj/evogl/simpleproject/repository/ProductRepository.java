@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface ProductRepository extends MongoRepository<Product, String> {
     Optional<Product> findByName(String name);
+
+    boolean existsByName(String newName);
 }
